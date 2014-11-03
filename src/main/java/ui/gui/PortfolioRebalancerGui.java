@@ -6,7 +6,7 @@ package ui.gui;
 import services.IPortfolioService;
 import services.OrderService;
 import ui.IUserInterface;
-import ui.gui.controllers.PortfolioController;
+import ui.gui.controllers.AppController;
 
 import javax.swing.*;
 
@@ -31,12 +31,10 @@ public class PortfolioRebalancerGui implements IUserInterface {
         this.window = new JFrame("Portfolio Rebalancer");
         this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // TODO: Routing (handle response, build request, dispatch to controller
-        IGuiController response = new PortfolioController(this.portfolios, this.orders);
+        IGuiController app = new AppController(this.portfolios, this.orders);
 
-        JPanel mainView = response.bind();
-
-        response.process();
+        JPanel mainView = app.bind();
+        app.process();
 
         window.add(mainView);
         window.pack();

@@ -5,6 +5,7 @@ package ui.gui.controllers;
 
 import exceptions.PortfolioHoldingPricesLoadException;
 import exceptions.PortfolioHoldingsLoadException;
+import models.Portfolio;
 import models.PortfolioList;
 import models.PricedPortfolio;
 import services.IPortfolioService;
@@ -33,26 +34,7 @@ public class PortfolioController implements IGuiController {
     public JPanel bind() {
         this.model = new PortfolioModel();
 
-        // Build up initial model data
-        PricedPortfolio portfolioData = null;
-
-        try {
-            portfolioData = this.getPortfolio();
-        }
-        catch (PortfolioHoldingsLoadException e) {
-            this.model.ErrorContextSummary = "Loading Portfolio";
-            this.model.ErrorMessage = "Could not load portfolio holdings.";
-
-            System.out.print(e);
-        }
-        catch (PortfolioHoldingPricesLoadException e) {
-            this.model.ErrorContextSummary = "Loading Portfolio";
-            this.model.ErrorMessage = "Could not load prices for portfolio holdings.";
-
-            System.out.print(e);
-        }
-
-        this.model.Portfolio = portfolioData;
+        // Build up base model data
         this.model.Cash = 0.0;
         this.model.Orders = null;
 
@@ -68,6 +50,7 @@ public class PortfolioController implements IGuiController {
         };
 
         // Create and show view
+        // TODO: Sort out constructor pattern for models -- I'm pretty sure this should all be DI-appropriate parameters
         this.view = new PortfolioView(this.model, createOrders);
         return this.view;
     }
@@ -77,17 +60,35 @@ public class PortfolioController implements IGuiController {
         view.render();
     }
 
-    // TODO: Pull getPortfolio out into a PortfolioChooserController which hands off to PortfolioController
-    private PricedPortfolio getPortfolio() throws PortfolioHoldingsLoadException, PortfolioHoldingPricesLoadException {
-        PortfolioList portfolios = this.portfolios.getPortfolioList();
+    public void setPortfolio(Portfolio portfolio) {
         models.Portfolio holdings;
 
-        holdings = this.portfolios.loadPortfolioHoldings(portfolios.getPrimary());
+        if (portfolio == null) {
+            this.model.Portfolio = null;
+        }
+        else {
+            try {
+                holdings = this.portfolios.loadPortfolioHoldings(portfolio);
 
-        if (holdings != null) {
-            return this.portfolios.getPricedPortfolioHoldings(holdings);
+                this.model.Portfolio =
+                        holdings != null
+                        ? this.portfolios.getPricedPortfolioHoldings(holdings)
+                        : null;
+            }
+            catch (PortfolioHoldingsLoadException e) {
+                this.model.ErrorContextSummary = "Loading Portfolio";
+                this.model.ErrorMessage = "Could not load portfolio holdings.";
+
+                System.out.print(e);
+            }
+            catch (PortfolioHoldingPricesLoadException e) {
+                this.model.ErrorContextSummary = "Loading Portfolio";
+                this.model.ErrorMessage = "Could not load prices for portfolio holdings.";
+
+                System.out.print(e);
+            }
         }
 
-        return null;
+        this.process();
     }
 }
