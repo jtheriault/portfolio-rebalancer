@@ -6,5 +6,6 @@ Current Features
 ** exhaust as much of your cash buying power as possible
 ** aim to rebalance a portfolio only through new purchases
 * Reads portfolio stored as a files
+* Supports multiple portfolios
 * Loads symbol prices separate from portfolio
 * GUI and CLI interfaces

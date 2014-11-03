@@ -34,6 +34,7 @@ public class PortfolioController implements IGuiController {
     public JPanel bind() {
         this.model = new PortfolioModel();
 
+        // TODO: Remove this -- it's redundant
         // Build up base model data
         this.model.Cash = 0.0;
         this.model.Orders = null;
