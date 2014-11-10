@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: Move Infrastructure concerns into a separate folder/package 
 public class FilePortfolioService implements IPortfolioService {
     private String getPortfolioFolder () {
         return System.getProperty("user.home") + "/.portfolio-rebalancer";
@@ -71,6 +72,7 @@ public class FilePortfolioService implements IPortfolioService {
     }
 
     @Override
+    // TODO: Abstract out a price service which this implements
     public PricedPortfolio getPricedPortfolioHoldings(Portfolio holdings) throws PortfolioHoldingPricesLoadException {
         PricedPortfolio portfolio;
 
